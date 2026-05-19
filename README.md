@@ -20,8 +20,6 @@ Unity Support is a Jenkins plugin for running Unity Editor builds and tests on J
 
 Read the full plugin documentation:
 
-[docs/usage.md](docs/usage.md)
-
 The usage guide covers installation, Jenkins setup, Pipeline examples, Freestyle configuration, credentials, Unity selection, all parameters, generated files, logs, and troubleshooting.
 
 ## Quick Pipeline Example
