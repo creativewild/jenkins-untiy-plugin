@@ -19,7 +19,7 @@ Unity Support is a Jenkins plugin for running Unity Editor builds and tests on J
 ## Documentation
 
 Read the full plugin documentation:
-https://github.com/creativewild/jenkins-untiy/wiki
+https://github.com/creativewild/jenkins-untiy-plugin/wiki
 
 The usage guide covers installation, Jenkins setup, Pipeline examples, Freestyle configuration, credentials, Unity selection, all parameters, generated files, logs, and troubleshooting.
 
@@ -88,4 +88,4 @@ For release tags, the workflow sets the Maven version from the tag, runs `mvn -B
 
 ## Repository
 
-Source: https://github.com/creativewild/jenkins-untiy
+Source: https://github.com/creativewild/jenkins-untiy-plugin
