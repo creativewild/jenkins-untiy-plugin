@@ -6,3 +6,4 @@
 - Added Pipeline and Freestyle surfaces.
 - Added Jenkins Tool and Credentials integration.
 - Added Unity detection, command construction, test conversion, and log classification logic.
+- added github CI actions
