@@ -1,0 +1,30 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Project path" field="projectPath"><f:textbox/></f:entry>
+  <f:entry title="Detection mode" field="detectionMode"><f:textbox default="auto"/></f:entry>
+  <f:entry title="Unity version" field="unityVersion"><f:textbox/></f:entry>
+  <f:entry title="Unity tool name" field="unityToolName"><f:textbox/></f:entry>
+  <f:entry title="Unity root" field="unityRoot"><f:textbox/></f:entry>
+  <f:entry title="Execute method" field="executeMethod"><f:textbox/></f:entry>
+  <f:entry title="Build target" field="buildTarget"><f:textbox/></f:entry>
+  <f:entry title="Build profile" field="buildProfile"><f:textbox/></f:entry>
+  <f:entry title="Standalone player" field="buildPlayer"><f:textbox/></f:entry>
+  <f:entry title="Player output path" field="buildPlayerPath"><f:textbox/></f:entry>
+  <f:entry title="Run Unity tests" field="runEditorTests"><f:checkbox/></f:entry>
+  <f:entry title="Test platform" field="testPlatform"><f:textbox/></f:entry>
+  <f:entry title="Test categories" field="testCategories"><f:textarea/></f:entry>
+  <f:entry title="Test names" field="testNames"><f:textarea/></f:entry>
+  <f:entry title="No graphics" field="noGraphics"><f:checkbox default="true"/></f:entry>
+  <f:entry title="Do not quit" field="noQuit"><f:checkbox/></f:entry>
+  <f:entry title="Silent crashes" field="silentCrashes"><f:checkbox/></f:entry>
+  <f:entry title="Additional arguments" field="arguments"><f:textarea/></f:entry>
+  <f:entry title="Line statuses file" field="lineStatusesFile"><f:textbox/></f:entry>
+  <f:entry title="Custom log path" field="logFilePath"><f:textbox/></f:entry>
+  <f:entry title="Verbosity" field="verbosity"><f:textbox default="normal"/></f:entry>
+  <f:entry title="Cache server" field="cacheServer"><f:textbox/></f:entry>
+  <f:entry title="License type" field="licenseType"><f:textbox default="none"/></f:entry>
+  <f:entry title="License scope" field="licenseScope"><f:textbox default="step"/></f:entry>
+  <f:entry title="Username/password credentials ID" field="usernamePasswordCredentialsId"><f:textbox/></f:entry>
+  <f:entry title="Serial credentials ID" field="serialCredentialsId"><f:textbox/></f:entry>
+  <f:entry title="Personal license file credentials ID" field="personalLicenseCredentialsId"><f:textbox/></f:entry>
+</j:jelly>

@@ -1,0 +1,21 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Maven / Jenkins plugin build output
+target/
+work/
+*.hpi
+*.jpi
+
+# Kotlin / Java
+.kotlin/
+*.class
+
+# Local runtime
+local.properties
+jenkinsHome/
+docs/
+examples/
