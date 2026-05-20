@@ -3,6 +3,8 @@ package io.jenkins.plugins.unity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import hudson.model.FreeStyleProject;
+import hudson.util.ListBoxModel;
+import java.util.List;
 import java.util.Map;
 import org.jenkinsci.plugins.structs.describable.DescribableModel;
 import org.junit.Rule;
@@ -12,6 +14,17 @@ import org.jvnet.hudson.test.JenkinsRule;
 public class UnityJenkinsConfigTest {
     @Rule
     public JenkinsRule jenkins = new JenkinsRule();
+
+    @Test
+    public void freestyleDescriptorPopulatesDropdowns() {
+        UnityBuilder.DescriptorImpl descriptor = new UnityBuilder.DescriptorImpl();
+
+        assertThat(values(descriptor.doFillDetectionModeItems())).containsExactly("auto", "tool", "manual");
+        assertThat(values(descriptor.doFillTestPlatformItems())).containsExactly("", "editmode", "playmode", "all");
+        assertThat(values(descriptor.doFillVerbosityItems())).containsExactly("normal", "minimal");
+        assertThat(values(descriptor.doFillLicenseTypeItems())).containsExactly("none", "professional", "personal");
+        assertThat(values(descriptor.doFillLicenseScopeItems())).containsExactly("step", "build");
+    }
 
     @Test
     public void freestyleBuilderRoundTripsConfiguration() throws Exception {
@@ -86,5 +99,9 @@ public class UnityJenkinsConfigTest {
         assertThat(step.getUsernamePasswordCredentialsId()).isEqualTo("unity-user");
         assertThat(step.getSerialCredentialsId()).isEqualTo("unity-serial");
         assertThat(step.getPersonalLicenseCredentialsId()).isEqualTo("unity-license");
+    }
+
+    private static List<String> values(ListBoxModel items) {
+        return items.stream().map(option -> option.value).toList();
     }
 }

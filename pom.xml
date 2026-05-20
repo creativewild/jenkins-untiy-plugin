@@ -13,7 +13,7 @@
 
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>unity-support</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <name>Unity Support</name>
@@ -45,6 +45,7 @@
         <kotlin.version>2.0.0</kotlin.version>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <hpi.bundledArtifacts>annotations,kotlin-stdlib</hpi.bundledArtifacts>
+        <maven-hpi-plugin.disabledTestInjection>true</maven-hpi-plugin.disabledTestInjection>
         <spotbugs.skip>true</spotbugs.skip>
     </properties>
 
@@ -170,10 +171,21 @@
                         <phase>none</phase>
                     </execution>
                     <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
                         <id>java-compile</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>java-test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
                         </goals>
                     </execution>
                 </executions>

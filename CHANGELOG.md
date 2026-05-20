@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1-SNAPSHOT
+
+- Fixed Freestyle project dropdown population for Unity builder select fields.
+
 ## 1.0.0-SNAPSHOT
 
 - Published the Unity integration as a native Jenkins plugin.

@@ -10,6 +10,7 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import io.jenkins.plugins.unity.core.UnityConfig;
 import java.io.IOException;
 import jenkins.tasks.SimpleBuildStep;
@@ -100,6 +101,45 @@ public class UnityBuilder extends Builder implements SimpleBuildStep {
         @Override
         public String getDisplayName() {
             return "Unity";
+        }
+
+        public ListBoxModel doFillDetectionModeItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add("Auto", "auto");
+            items.add("Jenkins tool", "tool");
+            items.add("Manual", "manual");
+            return items;
+        }
+
+        public ListBoxModel doFillTestPlatformItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add("Default", "");
+            items.add("Edit mode", "editmode");
+            items.add("Play mode", "playmode");
+            items.add("All modes", "all");
+            return items;
+        }
+
+        public ListBoxModel doFillVerbosityItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add("Normal", "normal");
+            items.add("Minimal", "minimal");
+            return items;
+        }
+
+        public ListBoxModel doFillLicenseTypeItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add("None", "none");
+            items.add("Unity Plus or Pro", "professional");
+            items.add("Unity Personal", "personal");
+            return items;
+        }
+
+        public ListBoxModel doFillLicenseScopeItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add("Step", "step");
+            items.add("Build", "build");
+            return items;
         }
 
         public FormValidation doCheckBuildProfile(@QueryParameter String value) {
