@@ -67,10 +67,55 @@ class UnityDetectorTest {
         assertThat(selected.source).isEqualTo("tool:Unity 6")
     }
 
+    @Test
+    fun `tool detection accepts Windows editor directory as Jenkins tool home`() {
+        val selectedRoot = fakeWindowsUnity("Editor-6000.3.5f2")
+        val editor = selectedRoot.resolve("Editor")
+
+        val selected = UnityDetector().select(
+            request(
+                detectionMode = DetectionMode.TOOL,
+                unityToolName = "Unity.exe",
+                unityTools = mapOf("Unity.exe" to editor.toString()),
+                osName = "Windows",
+            ),
+        )
+
+        assertThat(selected.unityVersion).isEqualTo(UnityVersion(6000, 3, 5))
+        assertThat(selected.unityPath).endsWith("Editor${java.io.File.separator}Unity.exe")
+        assertThat(selected.source).isEqualTo("tool:Unity.exe")
+    }
+
+    @Test
+    fun `tool detection accepts Windows executable as Jenkins tool home`() {
+        val selectedRoot = fakeWindowsUnity("Editor-6000.3.5f2")
+        val executable = selectedRoot.resolve("Editor").resolve("Unity.exe")
+
+        val selected = UnityDetector().select(
+            request(
+                detectionMode = DetectionMode.TOOL,
+                unityToolName = "Unity.exe",
+                unityTools = mapOf("Unity.exe" to executable.toString()),
+                osName = "Windows",
+            ),
+        )
+
+        assertThat(selected.unityVersion).isEqualTo(UnityVersion(6000, 3, 5))
+        assertThat(selected.unityPath).endsWith("Editor${java.io.File.separator}Unity.exe")
+        assertThat(selected.source).isEqualTo("tool:Unity.exe")
+    }
+
     private fun fakeLinuxUnity(versionDirectory: String): Path {
         val root = tempDir.resolve(versionDirectory)
         Files.createDirectories(root.resolve("Editor"))
         Files.writeString(root.resolve("Editor").resolve("Unity"), "#!/bin/sh\n")
+        return root
+    }
+
+    private fun fakeWindowsUnity(versionDirectory: String): Path {
+        val root = tempDir.resolve(versionDirectory)
+        Files.createDirectories(root.resolve("Editor"))
+        Files.writeString(root.resolve("Editor").resolve("Unity.exe"), "")
         return root
     }
 
@@ -81,6 +126,7 @@ class UnityDetectorTest {
         unityRoot: String? = null,
         unityToolName: String? = null,
         unityTools: Map<String, String> = emptyMap(),
+        osName: String = "Linux",
     ) = UnityDetectionRequest(
         detectionMode = detectionMode,
         requestedVersion = requestedVersion,
@@ -90,6 +136,6 @@ class UnityDetectorTest {
         unityTools = unityTools,
         env = emptyMap(),
         userHome = tempDir.toString(),
-        osName = "Linux",
+        osName = osName,
     )
 }

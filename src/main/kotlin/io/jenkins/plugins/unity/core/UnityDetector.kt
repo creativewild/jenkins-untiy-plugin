@@ -18,6 +18,8 @@ data class UnityDetectionRequest(
 ) : Serializable
 
 class UnityDetector {
+    private val installDirectoryVersionRegex = Regex("""(?:^|[^\d])(\d+)\.(\d+)(?:\.(\d+))?""")
+
 
     fun select(request: UnityDetectionRequest): UnityEnvironment {
         val os = OperatingSystem.from(request.osName)
@@ -85,13 +87,70 @@ class UnityDetector {
     }
 
     private fun environmentFromRoot(root: File, os: OperatingSystem, source: String): UnityEnvironment? {
-        val executable = editorExecutable(root, os)
-        if (!executable.exists()) return null
-        val version = UnityVersion.tryParse(root.name) ?: versionFromExecutable(executable)
+        val executable = editorExecutableCandidates(root, os).firstOrNull { it.exists() } ?: return null
+        val version = versionFromPath(root, executable, os) ?: versionFromExecutable(executable)
         return version?.let { UnityEnvironment(executable.absolutePath, it, source) }
     }
 
+    private fun editorExecutableCandidates(path: File, os: OperatingSystem): List<File> {
+        val candidates = linkedSetOf<File>()
+        when (os) {
+            OperatingSystem.WINDOWS -> {
+                if (path.name.equals("Unity.exe", true)) candidates += path
+                if (path.name.equals("Editor", true)) candidates += File(path, "Unity.exe")
+                candidates += File(path, "Editor/Unity.exe")
+            }
+            OperatingSystem.MAC -> {
+                if (path.name.equals("Unity", true)) candidates += path
+                if (path.name.equals("Unity.app", true)) candidates += File(path, "Contents/MacOS/Unity")
+                if (path.name.equals("MacOS", true)) candidates += File(path, "Unity")
+                candidates += File(path, "Unity.app/Contents/MacOS/Unity")
+            }
+            OperatingSystem.LINUX -> {
+                if (path.name == "Unity") candidates += path
+                if (path.name.equals("Editor", true)) candidates += File(path, "Unity")
+                candidates += File(path, "Editor/Unity")
+            }
+        }
+        return candidates.toList()
+    }
+
+    private fun versionFromPath(root: File, executable: File, os: OperatingSystem): UnityVersion? =
+        versionPathCandidates(root, executable, os)
+            .asSequence()
+            .mapNotNull { versionFromPathName(it.name) }
+            .firstOrNull()
+
+    private fun versionFromPathName(name: String): UnityVersion? =
+        UnityVersion.tryParse(name)
+            ?: installDirectoryVersionRegex.find(name)?.let { match ->
+                UnityVersion(
+                    match.groupValues[1].toInt(),
+                    match.groupValues[2].toInt(),
+                    match.groupValues.getOrNull(3)?.takeIf { it.isNotBlank() }?.toInt(),
+                )
+            }
+
+    private fun versionPathCandidates(root: File, executable: File, os: OperatingSystem): List<File> {
+        val candidates = linkedSetOf<File>()
+        candidates += root
+        when (os) {
+            OperatingSystem.WINDOWS, OperatingSystem.LINUX -> {
+                root.parentFile?.let { candidates += it }
+                root.parentFile?.parentFile?.let { candidates += it }
+                executable.parentFile?.parentFile?.let { candidates += it }
+            }
+            OperatingSystem.MAC -> {
+                root.parentFile?.let { candidates += it }
+                root.parentFile?.parentFile?.let { candidates += it }
+                executable.parentFile?.parentFile?.parentFile?.parentFile?.let { candidates += it }
+            }
+        }
+        return candidates.toList()
+    }
+
     private fun versionFromExecutable(executable: File): UnityVersion? {
+        if (!executable.exists()) return null
         return try {
             val process = ProcessBuilder(executable.absolutePath, "-version").redirectErrorStream(true).start()
             if (!process.waitFor(4, TimeUnit.SECONDS)) {

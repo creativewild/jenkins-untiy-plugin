@@ -4,6 +4,7 @@
 
 - Fixed Freestyle project dropdown population for Unity builder select fields.
 - Hardened build-scoped Unity Professional license tracking across multiple live build contexts.
+- Accepted Unity tool homes that point at the install root, `Editor` directory, or Unity executable.
 
 ## 1.0.0-SNAPSHOT
 
