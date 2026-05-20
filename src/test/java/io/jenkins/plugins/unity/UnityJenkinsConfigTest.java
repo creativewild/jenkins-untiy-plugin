@@ -3,7 +3,9 @@ package io.jenkins.plugins.unity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import hudson.model.FreeStyleProject;
+import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import io.jenkins.plugins.unity.core.UnityConfig;
 import java.util.List;
 import java.util.Map;
 import org.jenkinsci.plugins.structs.describable.DescribableModel;
@@ -99,6 +101,20 @@ public class UnityJenkinsConfigTest {
         assertThat(step.getUsernamePasswordCredentialsId()).isEqualTo("unity-user");
         assertThat(step.getSerialCredentialsId()).isEqualTo("unity-serial");
         assertThat(step.getPersonalLicenseCredentialsId()).isEqualTo("unity-license");
+    }
+
+    @Test
+    public void licenseScopeValidationAllowsProfessionalBuildAndRejectsPersonalBuild() {
+        UnityConfig professional = new UnityConfig();
+        professional.setLicenseType("professional");
+        professional.setLicenseScope("build");
+
+        UnityConfig personal = new UnityConfig();
+        personal.setLicenseType("personal");
+        personal.setLicenseScope("build");
+
+        assertThat(UnityConfigSupport.validate(professional).kind).isEqualTo(FormValidation.Kind.OK);
+        assertThat(UnityConfigSupport.validate(personal).kind).isEqualTo(FormValidation.Kind.ERROR);
     }
 
     private static List<String> values(ListBoxModel items) {

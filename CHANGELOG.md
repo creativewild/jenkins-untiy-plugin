@@ -3,6 +3,7 @@
 ## 1.0.1-SNAPSHOT
 
 - Fixed Freestyle project dropdown population for Unity builder select fields.
+- Hardened build-scoped Unity Professional license tracking across multiple live build contexts.
 
 ## 1.0.0-SNAPSHOT
 

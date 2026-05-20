@@ -74,8 +74,8 @@ public class UnityExecutor {
         LicenseType licenseType = LicenseType.from(config.getLicenseType());
         LicenseScope licenseScope = LicenseScope.from(config.getLicenseScope());
 
-        if (licenseType != LicenseType.NONE && licenseScope == LicenseScope.BUILD) {
-            ensureBuildScopedLicense(run, unity, secrets, workspace, env, launcher, listener);
+        if (licenseType == LicenseType.PROFESSIONAL && licenseScope == LicenseScope.BUILD) {
+            ensureBuildScopedLicense(config, run, unity, secrets, workspace, env, launcher, listener);
         }
 
         for (UnityInvocation invocation : plan.getInvocations()) {
@@ -113,6 +113,7 @@ public class UnityExecutor {
     }
 
     private void ensureBuildScopedLicense(
+            UnityConfig config,
             Run<?, ?> run,
             UnityEnvironment unity,
             UnityConfigSecrets secrets,
@@ -121,15 +122,36 @@ public class UnityExecutor {
             Launcher launcher,
             TaskListener listener)
             throws IOException, InterruptedException {
-        UnityBuildLicenseAction action = run.getAction(UnityBuildLicenseAction.class);
-        if (action == null) {
-            action = new UnityBuildLicenseAction();
-            run.addAction(action);
+        UnityBuildLicenseAction action = getOrCreateBuildLicenseAction(run);
+        UnityBuildLicenseAction.ActivationKey key = buildScopedLicenseKey(config, unity, workspace);
+        UnityBuildLicenseAction.ActivationRecord record =
+                new UnityBuildLicenseAction.ActivationRecord(secrets, unity, workspace, env, launcher, listener);
+        action.ensureActivated(
+                key,
+                record,
+                () -> activateLicense(LicenseType.PROFESSIONAL, unity, secrets, workspace, env, launcher, listener));
+    }
+
+    private UnityBuildLicenseAction getOrCreateBuildLicenseAction(Run<?, ?> run) {
+        synchronized (run) {
+            UnityBuildLicenseAction action = run.getAction(UnityBuildLicenseAction.class);
+            if (action == null) {
+                action = new UnityBuildLicenseAction();
+                run.addAction(action);
+            }
+            return action;
         }
-        if (!action.isActivated()) {
-            activateLicense(LicenseType.PROFESSIONAL, unity, secrets, workspace, env, launcher, listener);
-            action.markActivated(secrets, unity, workspace, env, launcher, listener);
-        }
+    }
+
+    private UnityBuildLicenseAction.ActivationKey buildScopedLicenseKey(UnityConfig config, UnityEnvironment unity, FilePath workspace)
+            throws IOException, InterruptedException {
+        Computer computer = workspace.toComputer();
+        String computerName = computer == null ? "" : computer.getName();
+        return new UnityBuildLicenseAction.ActivationKey(
+                computerName,
+                unity.getUnityPath(),
+                config.getUsernamePasswordCredentialsId(),
+                config.getSerialCredentialsId());
     }
 
     private int runUnityInvocation(

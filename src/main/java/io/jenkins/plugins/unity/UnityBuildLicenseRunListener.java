@@ -11,10 +11,6 @@ public class UnityBuildLicenseRunListener extends RunListener<Run<?, ?>> {
     public void onCompleted(Run<?, ?> run, TaskListener listener) {
         UnityBuildLicenseAction action = run.getAction(UnityBuildLicenseAction.class);
         if (action == null) return;
-        try {
-            action.returnLicense(new UnityExecutor());
-        } catch (Exception e) {
-            listener.error("Failed to return Unity license: " + e.getMessage());
-        }
+        action.returnLicenses(new UnityExecutor(), listener);
     }
 }
